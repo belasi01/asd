@@ -1,0 +1,11 @@
+Package: asd
+Type: Package
+Title: Analytical Spectral Device (ASD) routines
+Version: 0.1.0
+Author: Simon Bélanger
+Maintainer: <simon_belanger@uqar.ca>
+Description: Ensemble de routines pour lire les données ASD et calculer les
+    reflectances spectrales
+License: 
+LazyData: TRUE
+RoxygenNote: 5.0.1
