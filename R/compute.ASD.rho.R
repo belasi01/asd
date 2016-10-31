@@ -1,4 +1,6 @@
-#' Calcule la réflectance spectrale à partir de deux mesures d'ASD (surtface et spectralon). Compute spectral reflectance
+#' Calcule la réflectance spectrale à partir de deux mesures d'ASD 
+#' (surface et spectralon). 
+#' Compute spectral reflectance from two raw ASD measurements
 #'
 #' @param spectralon.file est le nom complet du fichier ASD de la mesure du spectralon. Is the full name and path of the spectralon file
 #' @param surface.file  est le nom complet du fichier ASD de la mesure de la surface. Is the full name and path of the surface file
