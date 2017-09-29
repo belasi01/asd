@@ -3,7 +3,7 @@
 \name{read.ASD}
 \alias{read.ASD}
 \title{Lit les données ASCII de l'ASD produites par le logiciel ViewSpec Pro.
- Reads ASD ASCII files exported from ViewSpec Pro.}
+Reads ASD ASCII files exported from ViewSpec Pro.}
 \usage{
 read.ASD(file)
 }
@@ -21,9 +21,8 @@ IntTime= Le temps d'intégration en millisecondes. The integration time in milli
 }
 \description{
 Lit les données ASCII de l'ASD produites par le logiciel ViewSpec Pro.
- Reads ASD ASCII files exported from ViewSpec Pro.
+Reads ASD ASCII files exported from ViewSpec Pro.
 }
 \author{
 Simon Bélanger
 }
-

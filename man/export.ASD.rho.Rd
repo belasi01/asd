@@ -17,4 +17,3 @@ Export spectral refelctance in an ASCII file
 \author{
 Simon Bélanger
 }
-

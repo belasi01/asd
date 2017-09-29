@@ -25,10 +25,14 @@ read.ASD <- function(file) {
   while (strsplit(unlist(line), " ")[[1]][1] != "Wavelength"){
     line = strsplit(readLines(con=id, n =1), "\t") # reads the time and depth for each records
     nrec <- nrec+1
-    #print(line)
+    #print(strsplit(unlist(line), " "))
 
     if (line != "character(0)") {
       if (strsplit(unlist(line), " ")[[1]][1] == "Integration") IntTime = as.numeric(strsplit(unlist(line), " ")[[1]][4])
+
+      if (strsplit(unlist(line), " ")[[1]][1] == "VNIR" &
+          strsplit(unlist(line), " ")[[1]][2] == "integration") IntTime = as.numeric(strsplit(unlist(line), " ")[[1]][5])
+
       if (strsplit(unlist(line), " ")[[1]][1] == "Spectrum" &
           strsplit(unlist(line), " ")[[1]][2] == "saved:") {
         Date = strsplit(unlist(line), " ")[[1]][3]

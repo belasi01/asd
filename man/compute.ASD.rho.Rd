@@ -2,7 +2,9 @@
 % Please edit documentation in R/compute.ASD.rho.R
 \name{compute.ASD.rho}
 \alias{compute.ASD.rho}
-\title{Calcule la réflectance spectrale à partir de deux mesures d'ASD (surtface et spectralon). Compute spectral reflectance}
+\title{Calcule la réflectance spectrale à partir de deux mesures d'ASD
+(surface et spectralon).
+Compute spectral reflectance from two raw ASD measurements}
 \usage{
 compute.ASD.rho(spectralon.file, surface.file, rho.spectralon = 0.98)
 }
@@ -16,23 +18,20 @@ compute.ASD.rho(spectralon.file, surface.file, rho.spectralon = 0.98)
 \value{
 Elle retourne une liste de cinq varaibles. It returns a list of five variables:
 
-
 waves= Les longueur d'onde. The wavelenght vector;
-
 
 L.surf=Luminance de la surface normalisée par le temps d'intégration. Raw radiance normalized by the integration time of the surface;
 
-
-  L.spectralon=Luminance du spectralon normalisée par le temps d'intégration. Raw radiance normalized by the integration time of the spectralon;
-
+L.spectralon=Luminance du spectralon normalisée par le temps d'intégration. Raw radiance normalized by the integration time of the spectralon;
 
 rho= La réflecntance de la surface. The surface reflectance;
-
 
 deltaTime = La différence de temps entre les mesures respectives du spectralon et de la surface. Is the time interval between the surface and spectralon measurements
 }
 \description{
-Calcule la réflectance spectrale à partir de deux mesures d'ASD (surtface et spectralon). Compute spectral reflectance
+Calcule la réflectance spectrale à partir de deux mesures d'ASD
+(surface et spectralon).
+Compute spectral reflectance from two raw ASD measurements
 }
 \examples{
 
@@ -40,4 +39,3 @@ Calcule la réflectance spectrale à partir de deux mesures d'ASD (surtface et s
 \author{
 Simon Bélanger
 }
-

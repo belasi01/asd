@@ -1,0 +1,183 @@
+#'
+#'@title Process a ASD data folder
+#'
+#'@description
+#'This function is called by the higher level function \code{\link{ASD.go}}.
+#'It can be also called in the command line to process a given data directory.
+#'
+#'
+#' @param dirdat is the current directory path contaning the files to process.
+#' @param  PNG is a logical parameter indicating whether or not diagnostic plots are saved in PNG format.
+#'Two types of plot are produced by the function \code{\link{plot.ASD.rhow}} and saved in a sub-folder
+#'/PNG/ that will be created in working directory. Default is PNG=FALSE.
+#' @param ADD_UNDERSCORE is a logical parameter indicating whether or not the basename of the ASD files to processed are
+#' separated from the file number in the name. By default, the basename is separated from the file
+#' number by an underscore (e.g. "StationX_00001.asd.txt"). The default is ADD_UNDERSCORE=TRUE.
+#'
+#'
+#'@return The function returns a list containing the rhow data.
+#'The same list (rhow) is saved into a rhow.RData file in dirdat.
+#'
+#'@details The function first looks into the cast.info.dat file found
+#'in the dirdat and check whether all the mandatory fields are present.
+#'If not, the processing may be stop or a default value is taken.
+#'Next the ASD files are merged using \code{\link{merge.ASD.radiances.for.rhow}}.
+#'Finally, the function calls \code{\link{compute.ASD.rhow}} to
+#'compute rhow spectra using various methods.
+#'
+#'@seealso
+#'\code{\link{compute.ASD.rhow}} and \code{\link{ASD.go}}
+#'
+#'@author Simon Bélanger
+process.ASD<- function(dirdat, PNG=FALSE, ADD_UNDERSCORE=TRUE) {
+
+  # Cast info file
+  default.cast.info.file <- paste( Sys.getenv("R_ASD_DATA_DIR"), "cast.info.dat", sep = "/")
+
+  cast.info.file <- paste(dirdat, "cast.info.dat", sep = "/")
+  if(!file.exists(cast.info.file)) {
+    file.copy(from = default.cast.info.file, to = cast.info.file)
+    cat("EDIT file", cast.info.file, "and CUSTOMIZE IT\n")
+    cat("This file contains the information on:\n")
+    cat("   lon, lat, basename,	ID,	\n")
+    cat("   Lpanel_start,	Lpanel_end,	Lsky_start,	Lsky_end,	Ltot_start,	Ltot_end,\n")
+    cat("   ThetaV,	Dphi,	Windspeed, Wind.units, quantile.prob,	rhow.Method\n")
+    cat("   Read the User Guide for more details.\n")
+    stop("Abort processing...")
+  }
+
+  cast.info <- read.table(cast.info.file, header=T, comment.char = "#")
+
+
+  # Check if cast.info contains all required information
+  if (is.null(cast.info$lon)) {
+    print("lon (station longitude) not found in cast.info.dat")
+    print("Abort processing.")
+    str(cast.info)
+    stop()
+  }
+  if (is.null(cast.info$lat)) {
+    print("lat (station latitude) not found in cast.info.dat")
+    print("Abort processing.")
+    stop()
+  }
+  if (is.null(cast.info$basename)) {
+    print("basename (the base of ASD file names) not found in cast.info.dat")
+    print("Abort processing.")
+    stop()
+  }
+
+  if (is.null(cast.info$Lpanel_start) | is.null(cast.info$Lpanel_end)) {
+    print("Lpanel_start or Lpanel_end (files numbers for spectralon panel) not found in cast.info.dat")
+    print("Abort processing.")
+    stop()
+  }
+  if (is.null(cast.info$Lsky_start) | is.null(cast.info$Lsky_end)) {
+    print("Lsky_start or Lsky_end (files numbers for sky radiance) not found in cast.info.dat")
+    print("Abort processing.")
+    stop()
+  }
+  if (is.null(cast.info$Ltot_start) | is.null(cast.info$Ltot_end)) {
+    print("Ltot_start or Ltot_end (files numbers for total surface radiance) not found in cast.info.dat")
+    print("Abort processing.")
+    stop()
+  }
+  if (is.null(cast.info$ID)) {
+    print("ID (the station ID) not found in cast.info.dat")
+    print("Abort processing.")
+    stop()
+  }
+
+  ################ Loop on each lines found in cast.info.dat
+  experiments <- nrow(cast.info)
+  print(paste("There are ", experiments, " cast(s) in the folder ", dirdat))
+  for(experiment in 1:experiments) {
+    if (is.null(cast.info$Dphi[experiment])) {
+      print("Dphi (delta azimuth betwen sun and sensor viewing aximuth) not found in cast.info.dat")
+      print("Assuming 90 degrees")
+      cast.info$Dphi[experiment] = 90
+    }
+    if (is.null(cast.info$ThetaV[experiment])) {
+      print("ThetaV not found in cast.info.dat")
+      print("Assuming 35 degrees")
+      cast.info$ThetaV[experiment] = 35
+    }
+    if (is.null(cast.info$Windspeed[experiment])) {
+      print("Windspeed not found in cast.info.dat")
+      print("Assuming wind = 4 m/s")
+      cast.info$Windspeed[experiment] = 4
+    } else {
+      if (is.null(cast.info$Wind.units[experiment])) {
+        print("Wind.units (i.e., Kts or m.s or km.h) not found in cast.info.dat")
+        print("Assuming wind units is knots!!!!")
+        cast.info$Wind.units[experiment] = "Kts"
+      } else
+      {
+        #        for (i in 1:nreplicates) {
+        if (cast.info$Wind.units[experiment] == "Kts") {
+          print("Convert wind speed from Knots to m/s" )
+          cast.info$Windspeed[experiment] = cast.info$Windspeed[experiment]/1.9426
+        }
+        if (cast.info$Wind.units[experiment] == "Km.h" | cast.info$Wind.units[experiment] == "Km/h") {
+          print("Convert wind speed from Km/h to m/s" )
+          cast.info$Windspeed[experiment] = cast.info$Windspeed[experiment]/3.6
+        }
+        #        }
+      }
+    }
+
+    if (is.null(cast.info$quantile.prob[experiment])) {
+      print("quantile.prob not found in cast.info.dat")
+      print("Assumes 0.5")
+      cast.info$quantile.prob[experiment] = 0.5#rep(0.5,nreplicates)
+    }
+    if (is.null(cast.info$rhow.Method)) {
+      print("rhow.Method not found in cast.info.dat")
+      print("Assumes no NIR correction (=0)")
+      cast.info$rhow.Method[experiment] = 0#rep(0.5,nreplicates)
+    }
+
+    #####
+    ##### Launch the processing
+    # Lecture des données ASD du panneau de spectralon, du ciel et de la surface
+    Lpanel=average.ASD.replicats(generate.file.names.ASD(cast.info$basename[experiment],
+                                                         cast.info$Lpanel_start[experiment],
+                                                         cast.info$Lpanel_end[experiment],ADD_UNDERSCORE))
+    Lsky  =average.ASD.replicats(generate.file.names.ASD(cast.info$basename[experiment],
+                                                         cast.info$Lsky_start[experiment],
+                                                         cast.info$Lsky_end[experiment],ADD_UNDERSCORE))
+    Ltot  =average.ASD.replicats(generate.file.names.ASD(cast.info$basename[experiment],
+                                                         cast.info$Ltot_start[experiment],
+                                                         cast.info$Ltot_end[experiment],ADD_UNDERSCORE))
+    # Les données ASD et les informations auxiliaires sont passées à la fonction suivante
+    ASDtot = merge.ASD.radiances.for.rhow(Ltot,
+                                          Lsky,
+                                          Lpanel,
+                                          StationID=cast.info$ID[experiment],
+                                          lat=cast.info$lat[experiment],
+                                          lon=cast.info$lon[experiment],
+                                          DateTime=mean.POSIXct(Ltot$DateTime),
+                                          ThetaV=cast.info$ThetaV[experiment],
+                                          Dphi=cast.info$Dphi[experiment],
+                                          Windspeed=cast.info$Windspeed[experiment])
+
+
+    ####
+    rhow = compute.ASD.rhow(ASDtot, 0.985, quantile.prob = cast.info$quantile.prob[experiment])
+
+    if (!dir.exists("RData")) dir.create("RData")
+    save(file = paste(dirdat,"/RData/",cast.info$ID[experiment],".ASD.rhow.RData", sep=""), rhow)
+
+    if (PNG) {
+      plot.ASD.rhow(rhow, PNG=TRUE, RADIANCES = TRUE)
+      plot.ASD.rhow(rhow, PNG=TRUE)
+      plot.ASD.rhow(rhow, PNG=FALSE, RADIANCES = TRUE)
+      plot.ASD.rhow(rhow, PNG=FALSE)
+    } else {
+      plot.ASD.rhow(rhow, PNG=FALSE, RADIANCES = TRUE)
+      plot.ASD.rhow(rhow, PNG=FALSE)
+    }
+
+  }
+}
+

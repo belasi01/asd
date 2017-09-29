@@ -1,0 +1,85 @@
+#'
+#'@title ASD data processing launcher
+#'
+#'@description This function launches the ASD data processing,
+#'which constists in calculating the hyperspectral marine reflectance (rho_w)
+#'from radiometric measurements performed using a ASD system. It processes
+#'data files found in each directories specify in the file named directories.for.ASD.dat.
+#'
+#'For each directory, the logging information must be stored in an
+#'ASCII file named cast.info.dat. Note that the ASD files were previously
+#'processed from raw to L2 using ViewSpecPro and exported to ASCII format (*.asd.txt).
+#'
+#' @param  PNG is a logical parameter indicating whether or not diagnostic plots are saved in PNG format.
+#'Two types of plot are produced by the function \code{\link{plot.ASD.rhow}} and saved in a sub-folder
+#'/PNG/ that will be created in working directory. Default is PNG=FALSE.
+#' @param ADD_UNDERSCORE is a logical parameter indicating whether or not the basename of the ASD files to processed are
+#' separated from the file number in the name. By default, the basename is separated from the file
+#' number by an underscore (e.g. "StationX_00001.asd.txt"). The default is ADD_UNDERSCORE=TRUE.
+#'
+#'@details First when ASD.go is executed, it reads a file named directories.for.ASD.dat
+#'in the working directory from which \code{\link{ASD.go}} was launched.
+#'
+#'Second, in each folder found in directories.for.ASD.dat, the programm will look for a
+#'file named cast.info.dat. This file contains the logging information need to process each station
+#'The cast.info.dat file contains the information on viewing geometry, windspeed,
+#'dark current file, as well as processing parameters such as the quantile probility,
+#'the maximum tilt tolerance, the "white correction method" to eliminate sun glint, foam,
+#'ocean spray etc. In details, the following fields should be found in cast.info.dat:
+#'
+#' * lon          is the longitude of the station
+#' * lat          in the latitude of the station
+#' * basename     is a character string corresponding to the base name of the ASD provided in RS3
+#' * ID           is acharacter string corresponding to the Station or Transect ID
+#' * Lpanel_start	in an integer for the first ASD file number for the spectralon panel (Lpanel)
+#' *  Lpanel_end	  in an integer for the last ASD file number for the spectralon panel
+#' * Lsky_start	  in an integer for the first ASD file number for the sky (Lsky)
+#' *  Lsky_end	    in an integer for the last ASD file number for the sky
+#' *  Ltot_start	  in an integer for the first ASD file number for the surface (Ltot)
+#' *  Ltot_end     in an integer for the last ASD file number for the surface
+#' *  ThehaV       is the view zenith angle
+#' *  Dphi         is the diffirence in azimuth between sun and sensor
+#' *  Windspeed    is the wind speed
+#' *  Wind.units   is the units of the wind speed ("Kts", "Km.h" or "m.s")
+#' *  quantile.prob is is a value (betwwen 0.25 to 1) for the maximum quantile probability for which the surface radiance (Lt) values will be discarded. The quantile probability is the value at which the probability of the random variable being less than or equal to this value. For example, a value of 0.5 means that every Lt value above the 50% quantile probability will be discarded, while a value of 0.8 means that only the values above the 80% quantile probability will be discarded. The rational is to eliminate outliers resulting from sun glitters, foam, sea ice, etc. The default value is 0.5 to eliminate Lt value above the 50% quantile probalibity.
+#' *  rhow.Method is an integer (0 to 5 or 999) indicating the best method for the specular sky reflectance removal
+#' (see User Guide). 0 is for Mobley rho_sky with no NIR correction.
+#' 1 is for Mobley rho_sky with NIR correction based on black pixel assumption.
+#' 2 is for Mobley rho_sky with NIR correction based on similarity spectrum using 720 and 780 nm.
+#' 3 is for Mobley rho_sky with NIR correction based on similarity spectrum using 780 and 870 nm.
+#' 4 is for rho_sky estimated using the black pixel assumption in NIR.
+#' 5 is for rho_sky estimated using the black pixel assumption in UV.
+#' 999 is for BAD data.
+#'
+#'
+#'Finally, the function \code{\link{process.ASD}} will be called to process each data folder.
+#' @md
+#'
+#'@seealso See \code{\link{process.ASD}}, \code{\link{compute.ASD.rhow}} and \code{\link{plot.ASD.rhow}} for more details
+#'about the processing parameters of the cast.info.dat file listed above.
+#'
+#'@author Simon Bélanger
+ASD.go <- function(PNG=FALSE, ADD_UNDERSCORE=TRUE) {
+
+  if(!file.exists("directories.for.ASD.dat")) {
+    cat("CREATE a file named directories.for.ASD.dat in current directory (where R is launched)\n")
+    cat("  and put in it the names of the directories where data files can be found (one by line)\n")
+    stop()
+  } else {
+    dirdats <- read.table("directories.for.ASD.dat", sep=" ",
+                          comment.char = "#", colClasses = "character")
+    for(i in 1:length(dirdats$V1)) {
+      dirdat  = dirdats$V1[i]
+      if(!file.exists(dirdat)) {
+        cat(dirdat, "does not exist")
+        stop()
+      } else setwd(dirdat)
+
+      print(paste("PROCESSING DIRECTORY ", dirdat))
+      rhow = process.ASD(dirdat, PNG)
+
+
+    }
+  }
+}
+

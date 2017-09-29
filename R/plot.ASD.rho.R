@@ -1,9 +1,17 @@
 #'
-#'  Plot ASD reflectance
+#'  Figure de la reflectance spectrale de l'ASD
 #'
-#'  Plot the ASD reflectance return by the function compute.ASD.rho
+#'  Produit une figure pour la mesure de réflectance ASD. La figure comprend deux paneaux superposés.
+#'  Celui du haut montre les spectres de Luminance normalisée par le temps d'intégration.
+#'  Celui du bas est la réflectance calculée.
 #'
-#'  @param asd is a list return by compute.ASD.rho
+#'  @param asd est une liste produite par la fonction \code{\link{compute.ASD.rho}}
+#'  @param type.surf est une chaine de caractère qui apparaitra dans la légende de la figure.
+#'  Par défaut type.surf="Surface'
+#'  @param PNG est une variable booléenne (TRUE ou FALSE) permet de produire un fichier png.
+#'  Par défaut PNG=FALSE
+#'
+#'  @author Simon Bélanger
 
 plot.ASD.rho <- function (asd, type.surf="Surface", PNG=FALSE) {
 
@@ -23,7 +31,7 @@ plot.ASD.rho <- function (asd, type.surf="Surface", PNG=FALSE) {
   # Second plot for the reflectance
   par(mar=c(4.1,4.1,0.2,2.1))
   plot(asd$waves, asd$rho,
-       xlab = "Wavelength",
+       xlab = "Longueur d'onde (nm)",
        ylab = expression(rho),
        type="l", lwd=3)
 
