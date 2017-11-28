@@ -144,7 +144,7 @@ Il est absolument essentiel de noter ces informations sur le terrain et les tran
 Le fichier log comprend deux autres champs qui seront utilisés durant le traitement des données. On doit les inclure quand même quand un veut utiliser les fontionnalités du package pour le traitement semi-automatisé du package (voir section **Traitement en batch** ci-bas)
 
 * **quantile.prob** est la valeur du quantile au-delà duquel les spectres seront éliminés (varie entre 0.25 et 1). Il a pour but d'éliminer les spectres qui seraient contaminés par la réflexion speculaire du soleil. Par exemple, une valeur de 0.75 éliminera les spectres au-delà du troisième quantile. Une valeur de 0.5 éliminera les spectres au-delà du deuxième quantile, soit les spectres qui sont au dessus de la moyenne de tous les spectres (voir plus bas pour plus de détails). 
-* **Rhow_Method** est la méthode de correction de la réflexion spéculaire qui sera retenue **à la fin du traitement** des données. Cette information sera utilisée pour générer la base de données validées. Sept options sont possibles: 
+* **rhow.Method** est la méthode de correction de la réflexion spéculaire qui sera retenue **à la fin du traitement** des données. Cette information sera utilisée pour générer la base de données validées. Sept options sont possibles: 
       + 0 : Méthode de Mobley pour $\rho_{Fresnel}$ sans correction dans le PIR; 
       + 1 : Méthode de Mobley pour $\rho_{Fresnel}$ avec la coorection du pixel noir; 
       + 2 : Méthode de Mobley pour $\rho_{Fresnel}$ avec la coorection utilisant le spectre de similarité de de Ruddick et al. (2005) avec $\lambda_1$=720 et $\lambda_2$=780 (eq. 8);

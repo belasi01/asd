@@ -61,6 +61,7 @@
 #'@author Simon Bélanger
 ASD.go <- function(PNG=FALSE, ADD_UNDERSCORE=TRUE) {
 
+  parent.dir <- getwd()
   if(!file.exists("directories.for.ASD.dat")) {
     cat("CREATE a file named directories.for.ASD.dat in current directory (where R is launched)\n")
     cat("  and put in it the names of the directories where data files can be found (one by line)\n")
@@ -76,8 +77,9 @@ ASD.go <- function(PNG=FALSE, ADD_UNDERSCORE=TRUE) {
       } else setwd(dirdat)
 
       print(paste("PROCESSING DIRECTORY ", dirdat))
-      rhow = process.ASD(dirdat, PNG)
+      rhow = process.ASD(dirdat, PNG, ADD_UNDERSCORE)
 
+      setwd(parent.dir)
 
     }
   }

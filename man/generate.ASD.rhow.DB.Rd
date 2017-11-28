@@ -2,20 +2,23 @@
 % Please edit documentation in R/generate.ASD.rhow.DB.R
 \name{generate.ASD.rhow.DB}
 \alias{generate.ASD.rhow.DB}
-\title{Generate a data base for rhow from the ASD (NOT YET AVAILABLE)}
+\title{Generate a data base for rhow from the ASD}
 \usage{
-generate.ASD.rhow.DB(dirdat)
+generate.ASD.rhow.DB(path = "./", mission = "XXX")
 }
 \arguments{
-\item{rhow.Method}{is an integer (0 to 5) indicating the best method for the specular sky
-reflectance removal (see User Guide).
-0 is for Mobley rho_sky with no NIR correction.
-1 is for Mobley rho_sky with NIR correction based on black pixel assumption.
-2 is for Mobley rho_sky with NIR correction based on similarity spectrum using 720 and 780 nm.
-3 is for Mobley rho_sky with NIR correction based on similarity spectrum using 780 and 870 nm.
-4 is for rho_sky estimated using the black pixel assumption in the NIR.
-5 is for rho_sky estimated using the black pixel assumption in the UV.}
+\item{path}{is the path where the file directories.for.ASD.dat containing the data folders
+to merge in the data base.}
+
+\item{mission}{is a string for the name of the mission. It will be used for the file names of the output.}
+}
+\value{
+It returns a list object named ASD.DB containing a matrix of rhow (rhow.m) and vectors for
+StationID, data, lat, lon sunzen, rhow.Method.
+
+The object ASD.DB is saved in RData format. The data are also saved in ASCII (.dat with comma separator)
+and a figure showing the measured rho_w spectra of the data base is produced.
 }
 \description{
-Generate a data base for rhow from the ASD (NOT YET AVAILABLE)
+Generate a data base for rhow from the ASD
 }

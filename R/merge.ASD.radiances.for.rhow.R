@@ -49,7 +49,7 @@ merge.ASD.radiances.for.rhow <- function(Ltot,
   sunpos <- possol(month, day, ah, lon, lat)
   ThetaS <- sunpos[1]
   PhiS <-sunpos[2]
-  anc <- list(StationID=StationID,
+  anc <- list(StationID=as.character(StationID),
               lat=lat,
               lon=lon,
               DateTime=DateTime,

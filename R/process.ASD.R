@@ -168,15 +168,9 @@ process.ASD<- function(dirdat, PNG=FALSE, ADD_UNDERSCORE=TRUE) {
     if (!dir.exists("RData")) dir.create("RData")
     save(file = paste(dirdat,"/RData/",cast.info$ID[experiment],".ASD.rhow.RData", sep=""), rhow)
 
-    if (PNG) {
-      plot.ASD.rhow(rhow, PNG=TRUE, RADIANCES = TRUE)
-      plot.ASD.rhow(rhow, PNG=TRUE)
-      plot.ASD.rhow(rhow, PNG=FALSE, RADIANCES = TRUE)
-      plot.ASD.rhow(rhow, PNG=FALSE)
-    } else {
-      plot.ASD.rhow(rhow, PNG=FALSE, RADIANCES = TRUE)
-      plot.ASD.rhow(rhow, PNG=FALSE)
-    }
+    plot.ASD.rhow(rhow, PNG, RADIANCES = TRUE)
+    plot.ASD.rhow(rhow, PNG)
+
 
   }
 }
