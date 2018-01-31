@@ -27,6 +27,8 @@ get.rho550 <- function (thetaV, delta.phi, windspeed,thetaS){
   xwindspeed = as.numeric(dimnames(rho550)$windspeed)
   xthetaS = as.numeric(dimnames(rho550)$thetaS)
 
+  if (windspeed >= 15) windspeed = 14.99
+
   # NOTE : The approx3D function require equally spaced x, y, z
   # I therefore replace the 87.5 by 90
   xthetaS[xthetaS == 87.5] = 90
