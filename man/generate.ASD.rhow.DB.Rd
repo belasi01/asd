@@ -4,17 +4,21 @@
 \alias{generate.ASD.rhow.DB}
 \title{Generate a data base for rhow from the ASD}
 \usage{
-generate.ASD.rhow.DB(path = "./", mission = "XXX")
+generate.ASD.rhow.DB(path = "./", mission = "XXX", wave.range = c(350,
+  900))
 }
 \arguments{
 \item{path}{is the path where the file directories.for.ASD.dat containing the data folders
 to merge in the data base.}
 
 \item{mission}{is a string for the name of the mission. It will be used for the file names of the output.}
+
+\item{wave.range}{is a vector of two integers indicating the wavelength range to output in the database.
+The default is wave.range=c(350,900) to put the data from 350 nm to 900 nm.}
 }
 \value{
 It returns a list object named ASD.DB containing a matrix of rhow (rhow.m) and vectors for
-StationID, data, lat, lon sunzen, rhow.Method.
+StationID, data, lat, lon sunzen, windspeed, rhow.Method.
 
 The object ASD.DB is saved in RData format. The data are also saved in ASCII (.dat with comma separator)
 and a figure showing the measured rho_w spectra of the data base is produced.

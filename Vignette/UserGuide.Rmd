@@ -17,7 +17,7 @@ knitr::opts_knit$set(root.dir = "~/MEGA/data/CHOne-2-BSI/2017/L1/ASD/20170623_UQ
 
 ## Introduction
 
-Ce document présente les principales fonctionalités du package ASD. Cette librairie a été développée pour calculer les réflectances des surfaces terrestres où des surfaces aquatiques. 
+Ce document présente les principales fonctionalités du package ASD. Cette librairie a été développée pour calculer les réflectances pour des surfaces terrestres ou pour des surfaces aquatiques. 
 
 Nous prennons pour acquis que les données ASD auront été converties en format texte (ASCII) au préalable dans le logiciel **ViewSpec Pro** qui n'est pas décrit dans ce document. 
 
@@ -157,6 +157,15 @@ Le fichier log comprend deux autres champs qui seront utilisés durant le traite
 
 Idéalement, il faut également inclure dans le log la position en latitude et longitude puisque cette information est aussi essentiel pour calculer la hauteur du soleil, $\theta_s$, au moment de la mesure. Toutes ces observations auxiliaires seront éventuellement nécessaire dans le traitement des données. 
 
+
+## Installation de la librairie `asd`
+
+La librarie `asd` se trouve que la plateforme GitHub en ligne et peut s'installer avec la commande `install_github` de la librarie `devtools` qui doit également être installée. 
+
+
+```{r, installation, message=F, warning=F}
+devtools::install_github("belasi01/asd")
+```
 
 ## Principales fonctions de la librairie `asd`
 
