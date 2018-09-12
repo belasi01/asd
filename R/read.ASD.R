@@ -16,7 +16,7 @@
 #'
 read.ASD <- function(file) {
 
-
+print(file)
   # extract header information
   id = file(file, "r")
   line = strsplit(readLines(con=id, n =1), "\t") # Reads the first header line
