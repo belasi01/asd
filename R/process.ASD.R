@@ -47,8 +47,8 @@ process.ASD<- function(dirdat, PNG=FALSE,
     cat("This file contains the information on:\n")
     cat("   lon, lat, basename,	ID,	\n")
     cat("   Lpanel_start,	Lpanel_end,	Lsky_start,	Lsky_end,	Ltot_start,	Ltot_end,\n")
-    cat("   ThetaV,	Dphi,	Windspeed, Wind.units, quantile.prob,	rhow.Method\n")
-    cat("   Read the User Guide for more details.\n")
+    cat("   ThetaV,	Dphi,	Windspeed, Wind.units, quantile.prob,	rho.panel, rhow.Method\n")
+    cat("   Read the User's Guide for more details.\n")
     stop("Abort processing...")
   }
 
@@ -132,6 +132,11 @@ process.ASD<- function(dirdat, PNG=FALSE,
       }
     }
 
+    if (is.null(cast.info$rho.panel[experiment])) {
+      print("rho.panel not found in cast.info.dat")
+      print("Assumes 0.985")
+      cast.info$rho.panel[experiment] = 0.985#rep(0.5,nreplicates)
+    }
     if (is.null(cast.info$quantile.prob[experiment])) {
       print("quantile.prob not found in cast.info.dat")
       print("Assumes 0.5")
@@ -169,7 +174,8 @@ process.ASD<- function(dirdat, PNG=FALSE,
 
 
     ####
-    rhow = compute.ASD.rhow(ASDtot, 0.985, quantile.prob = cast.info$quantile.prob[experiment])
+    rhow = compute.ASD.rhow(ASDtot, rho.panel = cast.info$rho.panel[experiment],
+                            quantile.prob = cast.info$quantile.prob[experiment])
 
     if (!dir.exists("RData")) dir.create("RData")
     save(file = paste(dirdat,"/RData/",cast.info$ID[experiment],".ASD.rhow.RData", sep=""), rhow)

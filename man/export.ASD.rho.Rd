@@ -4,7 +4,7 @@
 \alias{export.ASD.rho}
 \title{Export spectral refelctance in an ASCII file}
 \usage{
-export.ASD.rho(asd, file.out = "asd.rho.txt")
+export.ASD.rho(asd, file.out = "asd.rho.csv")
 }
 \arguments{
 \item{asd}{est une liste retourné par la fonction \code{\link{compute.ASD.rho}}}

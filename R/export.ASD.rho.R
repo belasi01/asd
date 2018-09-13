@@ -6,10 +6,10 @@
 #'
 
 
-export.ASD.rho <- function (asd, file.out= "asd.rho.txt") {
+export.ASD.rho <- function (asd, file.out= "asd.rho.csv") {
 
   df <- data.frame(wavelenght=asd$waves, rho=asd$rho)
 
-  write.table(df, file=file.out, quote = F, row.names = F)
+  write.table(df, file=file.out, quote = F, row.names = F, sep=";", dec=",")
 
 }

@@ -36,4 +36,6 @@ plot.ASD.rho <- function (asd, type.surf="Surface", PNG=FALSE) {
        type="l", lwd=3)
 
   if (PNG) dev.off()
+  par(mfrow=c(1,1))
+  par(mar=c(4.1,4.1,2.1,2.1))
 }
