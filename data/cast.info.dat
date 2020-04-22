@@ -15,7 +15,16 @@
 #  Wind.units   is the units of the wind speed ("Kts", "Km.h" or "m.s")
 #  quantile.prob is is a value (betwwen 0.25 to 1) for the maximum quantile probability for which the surface radiance (Lt) values will be discarded. The quantile probability is the value at which the probability of the random variable being less than or equal to this value. For example, a value of 0.5 means that every Lt value above the 50% quantile probability will be discarded, while a value of 0.8 means that only the values above the 80% quantile probability will be discarded. The rational is to eliminate outliers resulting from sun glitters, foam, sea ice, etc. The default value is 0.5 to eliminate Lt value above the 50% quantile probalibity.
 # rho.panel   is the reflectance of the reference panel (spectralon). It is normally provided by Labsphere.
-#  rhow.Method is an integer (0 to 4) indicating the best method for the specular sky reflectance removal (see User Guide). 0 is for Mobley rho_sky with no NIR correction. 1 is for Mobley rho_sky with NIR correction based on black pixel assumption. 2 is for Mobley rho_sky with NIR correction based on similarity spectrum using 720 and 780 nm. 3 is for Mobley rho_sky with NIR correction based on similarity spectrum using 780 and 870 nm.  4 is for rho_sky estimated using the black pixel assumption. 999 is for BAD data.
+#  rhow.Method is an integer (0 to 4) indicating the best method for the specular sky reflectance removal (see User Guide):
+#      0 is for Mobley's LUT for rho_sky with no additional correction.
+#      1 is for Mobley's LUT for rho_sky, but with NIR correction based on black pixel assumption.
+#      2 is for Mobley rho_sky with NIR correction based on similarity spectrum using 720 and 780 nm.
+#      3 is for Mobley rho_sky with NIR correction based on similarity spectrum using 780 and 870 nm.
+#      4 is for rho_sky estimated using the black pixel assumption in the NIR.
+#      5 is for rho_sky estimated using the black pixel assumption in the UV (350 nm).
+#      6 is for rho_sky estimated using the black pixel assumption in both UV and NIR (spectrally dependent).
+#      7 is for rho_sky estimated using COPS Rrs measurement at 2 valid wavelengths (spectrally dependent).
+#       999 is for BAD data.
 #
 ##################################################
 lon lat basename	ID	Lpanel_start	Lpanel_end	Lsky_start	Lsky_end	Ltot_start	Ltot_end	ThetaV	Dphi	Windspeed Wind.units quantile.prob	rho.panel rhow.Method

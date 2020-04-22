@@ -69,19 +69,34 @@ plot.ASD.rhow <- function (asd, PNG=FALSE, RADIANCES=FALSE) {
 
 
   } else {
-    if (PNG) {
-      png(paste("PNG/",asd$anc$StationID,"_rhow.png",sep=""), units = "in",
-          width = 5, height = 4, res = 300)
 
+    if (!is.na(asd$rhow.COPS[1])) {
       Df = as.data.frame(cbind(wavelength=asd$waves[ix.wl],
                                None=asd$rhow[ix.wl],
                                Null_900=asd$rhow.NULL[ix.wl],
                                Similarity_720_780=asd$rhow.SIMILARITY1[ix.wl],
                                Similarity_780_870=asd$rhow.SIMILARITY2[ix.wl],
                                NIR = asd$rhow.NIR[ix.wl],
-                               UV = asd$rhow.UV[ix.wl]))
-      Dfm = melt(Df, id.vars = c("wavelength"))
-      names(Dfm) = c("wavelength", "rho_w", "value" )
+                               UV  = asd$rhow.UV[ix.wl],
+                               UV.NIR = asd$rhow.UV.NIR[ix.wl],
+                               COPS= asd$rhow.COPS[ix.wl]))
+    } else {
+      Df = as.data.frame(cbind(wavelength=asd$waves[ix.wl],
+                               None=asd$rhow[ix.wl],
+                               Null_900=asd$rhow.NULL[ix.wl],
+                               Similarity_720_780=asd$rhow.SIMILARITY1[ix.wl],
+                               Similarity_780_870=asd$rhow.SIMILARITY2[ix.wl],
+                               NIR = asd$rhow.NIR[ix.wl],
+                               UV = asd$rhow.UV[ix.wl],
+                               UV.NIR = asd$rhow.UV.NIR[ix.wl]))
+    }
+    Dfm = melt(Df, id.vars = c("wavelength"))
+    names(Dfm) = c("wavelength", "rho_w", "value" )
+
+    if (PNG) {
+      png(paste("PNG/",asd$anc$StationID,"_rhow.png",sep=""), units = "in",
+          width = 5, height = 4, res = 300)
+
       p1 <- ggplot(data=Dfm, aes(x=wavelength, y=value, colour=rho_w)) + geom_line()
       p1 <- p1 + scale_x_continuous(limits = c(350, 950))
       p1 <- p1 + labs(x=expression(lambda), y=expression(paste(rho[w])), colour="Correction method")
@@ -92,15 +107,6 @@ plot.ASD.rhow <- function (asd, PNG=FALSE, RADIANCES=FALSE) {
       print(p1)
       dev.off()
     } else {
-      Df = as.data.frame(cbind(wavelength=asd$waves[ix.wl],
-                               None=asd$rhow[ix.wl],
-                               Null_900=asd$rhow.NULL[ix.wl],
-                               Similarity_720_780=asd$rhow.SIMILARITY1[ix.wl],
-                               Similarity_780_870=asd$rhow.SIMILARITY2[ix.wl],
-                               NIR = asd$rhow.NIR[ix.wl],
-                               UV = asd$rhow.UV[ix.wl]))
-      Dfm = melt(Df, id.vars = c("wavelength"))
-      names(Dfm) = c("wavelength", "rho_w", "value" )
       p1 <- ggplot(data=Dfm, aes(x=wavelength, y=value, colour=rho_w)) + geom_line()
       p1 <- p1 + scale_x_continuous(limits = c(350, 950))
       p1 <- p1 + labs(x=expression(lambda), y=expression(paste(rho[w])), colour="Correction method")

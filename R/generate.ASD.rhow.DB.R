@@ -66,6 +66,8 @@ generate.ASD.rhow.DB <- function(path="./",mission="XXX", wave.range=c(350,900))
         if (rhow.Method[cast] == 3) rhow.m[cast,] <- rhow$rhow.SIMILARITY2[ix.min:ix.max]
         if (rhow.Method[cast] == 4) rhow.m[cast,] <- rhow$rhow.NIR[ix.min:ix.max]
         if (rhow.Method[cast] == 5) rhow.m[cast,] <- rhow$rhow.UV[ix.min:ix.max]
+        if (rhow.Method[cast] == 6) rhow.m[cast,] <- rhow$rhow.UV.NIR[ix.min:ix.max]
+        if (rhow.Method[cast] == 7) rhow.m[cast,] <- rhow$rhow.COPS[ix.min:ix.max]
         if (rhow.Method[cast] == 999) rhow.m[cast,] <- rep(NA,nwaves)
 
         ID[cast] <- as.character(cast.info$ID[j])
