@@ -42,6 +42,10 @@ compute.ASD.rhow <- function(raw.asd,
 
   # Trim data to remove high Ltot spectra which may be affected by sun glint
   ix350 = which.min(abs(Ltot$waves - 350))
+
+  # use this to avoid negativa values of (ix350-5),May 22,2020, Yanqun
+  if (ix350<6) ix350 = 6
+
   ix490 = which.min(abs(Ltot$waves - 490))
   ix720 = which.min(abs(Ltot$waves - 720))
   ix750 = which.min(abs(Ltot$waves - 750))
@@ -158,11 +162,15 @@ compute.ASD.rhow <- function(raw.asd,
 
       remove.file <- "remove.cops.dat"
       select.file <- "select.cops.dat"
+
+      select.file.exists <- FALSE
+
       if (file.exists(remove.file)) {
         remove.tab <- read.table(remove.file, header = FALSE, colClasses = "character", sep = ";")
         kept.cast <- remove.tab[[2]] == "1"
       }
       if (file.exists(select.file)) {
+        select.file.exists <- TRUE
         remove.tab <- read.table(select.file, header = FALSE, colClasses = "character", sep = ";")
         kept.cast <- remove.tab[[2]] == "1"
         Rrs_method <- remove.tab[kept.cast, 3]
@@ -185,8 +193,9 @@ compute.ASD.rhow <- function(raw.asd,
           waves = cops$LuZ.waves
 
           # extract Rrs
-          if (file.exists(select.file)) {
-            mRrs[j,] = eval(parse(text=paste0("cops$",Rrs_method[j],"[xw]")))
+          if (select.file.exists) {
+            #mRrs[j,] = eval(parse(text=paste0("cops$",Rrs_method[j],"[xw]")))
+            mRrs[j,] = eval(parse(text=paste0("cops$",Rrs_method[j])))
 
           } else {
             mRrs[j,] = cops$Rrs.0p.linear
@@ -199,8 +208,9 @@ compute.ASD.rhow <- function(raw.asd,
       } else {
         load(paste(listfile, ".RData", sep=""))
         waves = cops$LuZ.waves
-        if (file.exists(select.file)) {
-          cops.Rrs.m = eval(parse(text=paste0("cops$",Rrs_method,"[xw]")))
+        if (select.file.exists) {
+          #cops.Rrs.m = eval(parse(text=paste0("cops$",Rrs_method,"[xw]")))
+          cops.Rrs.m = eval(parse(text=paste0("cops$",Rrs_method)))
 
         } else {
           cops.Rrs.m = cops$Rrs.0p.linear
@@ -216,6 +226,8 @@ compute.ASD.rhow <- function(raw.asd,
 
 
       ix.waves.min.asd = which.min(abs(Ltot$waves - waves.min))
+      if (ix.waves.min.asd<6) ix.waves.min.asd=6
+
       ix.waves.max.asd = which.min(abs(Ltot$waves - waves.max))
 
       # Estimate rho.shy at the two wavelenghts selected
