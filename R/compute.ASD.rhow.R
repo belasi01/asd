@@ -164,10 +164,8 @@ compute.ASD.rhow <- function(raw.asd,
       select.file <- "select.cops.dat"
 
       select.file.exists <- FALSE
-      remove.file.exists <- TRUE
 
       if (file.exists(remove.file)) {
-        remove.file.exists <- FALSE
         remove.tab <- read.table(remove.file, header = FALSE, colClasses = "character", sep = ";")
         kept.cast <- remove.tab[[2]] == "1"
       }
