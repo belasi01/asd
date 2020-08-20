@@ -204,7 +204,7 @@ compute.ASD.rhow <- function(raw.asd,
 
         }
 
-        cops.Rrs.m = apply(mRrs, 2, mean)
+        cops.Rrs.m = apply(mRrs, 2, mean, na.rm=T)
       } else {
         load(paste(listfile, ".RData", sep=""))
         waves = cops$LuZ.waves

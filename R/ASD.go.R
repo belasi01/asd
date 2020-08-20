@@ -81,21 +81,19 @@ ASD.go <- function(PNG=FALSE, ADD_UNDERSCORE=TRUE,
     cat("  and put in it the names of the directories where data files can be found (one by line)\n")
     stop()
   } else {
-    dirdats <- read.table("directories.for.ASD.dat", sep=" ",
-                          comment.char = "#", colClasses = "character")
-    for(i in 1:length(dirdats$V1)) {
-      dirdat  = dirdats$V1[i]
+    dirdats <- scan(file = "directories.for.ASD.dat", "", sep = "\n", comment.char = "#")
+    starting.dir <- getwd()
+    for(dirdat in dirdats) {
       if(!file.exists(dirdat)) {
         cat(dirdat, "does not exist")
         stop()
       } else setwd(dirdat)
-
-      print(paste("PROCESSING DIRECTORY ", dirdat))
+      #mymessage(paste("PROCESSING DIRECTORY", dirdat), head = "@", tail = "@")
+      print(paste("PROCESSING DIRECTORY", dirdat, "@@@@@@@@@@"))
       rhow = process.ASD(dirdat, PNG, ADD_UNDERSCORE, extension, NUM.DIGITS, COPS)
 
-      setwd(parent.dir)
-
     }
+    setwd(starting.dir)
   }
 }
 

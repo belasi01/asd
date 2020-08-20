@@ -17,8 +17,8 @@ generate.ASD.rhow.DB <- function(path="./",mission="XXX", wave.range=c(350,900))
 
     setwd(path)
     path<- getwd()
-    dirs = read.table("directories.for.ASD.dat")
-    dirs = dirs$V1
+    dirs <- scan(file = "directories.for.ASD.dat", "", sep = "\n", comment.char = "#")
+
 
     ndirs = length(dirs)
     waves = wave.range[1]:wave.range[2]
@@ -121,9 +121,9 @@ generate.ASD.rhow.DB <- function(path="./",mission="XXX", wave.range=c(350,900))
 
     # Save the data
     setwd(path)
-    save(ASD.BD, file=paste("ASD.DB.", mission,".RDATA",sep=""))
+    save(ASD.BD, file=paste("ASD.DB.PackageVersion.",packageVersion("asd"),".", mission,".RDATA",sep=""))
     all$DateTime=as.POSIXct(all$DateTime, origin="1970-01-01")
-    write.table(all, file = paste("ASD.DB.", mission,".dat",sep=""), sep=",", quote=F, row.names=F)
+    write.table(all, file = paste("ASD.DB.PackageVersion.",packageVersion("asd"),".", mission,".dat",sep=""), sep=",", quote=F, row.names=F)
 
 
 
