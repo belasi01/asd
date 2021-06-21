@@ -68,6 +68,7 @@ generate.ASD.rhow.DB <- function(path="./",mission="XXX", wave.range=c(350,900))
         if (rhow.Method[cast] == 5) rhow.m[cast,] <- rhow$rhow.UV[ix.min:ix.max]
         if (rhow.Method[cast] == 6) rhow.m[cast,] <- rhow$rhow.UV.NIR[ix.min:ix.max]
         if (rhow.Method[cast] == 7) rhow.m[cast,] <- rhow$rhow.COPS[ix.min:ix.max]
+        if (rhow.Method[cast] == 8) rhow.m[cast,] <- rhow$rhow.Kutzer[ix.min:ix.max]
         if (rhow.Method[cast] == 999) rhow.m[cast,] <- rep(NA,nwaves)
 
         ID[cast] <- as.character(cast.info$ID[j])
@@ -133,7 +134,7 @@ generate.ASD.rhow.DB <- function(path="./",mission="XXX", wave.range=c(350,900))
 
     Df = as.data.frame(cbind(wavelength=waves, t(rhow.m)))
     colnames(Df) <- c("wavelength", ID)
-    Dfm = melt(Df, id.vars = c("wavelength"))
+    Dfm = reshape2::melt(Df, id.vars = c("wavelength"))
     names(Dfm) = c("wavelength", "rho_w", "value" )
 
     p1 <- ggplot(data=Dfm, aes(x=wavelength, y=value, colour=rho_w)) + geom_line()

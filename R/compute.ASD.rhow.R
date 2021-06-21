@@ -75,11 +75,20 @@ compute.ASD.rhow <- function(raw.asd,
   ######### Average data
   Ed.mean = pi*apply(Lpanel, 1, mean)/rho.panel # See eq 5 i Mobley (1999)
   Li.mean = apply(Li, 1, mean)
-  Lt.mean = apply(Lt, 1, mean)
+  if (ncol(as.matrix(Lt))==1) {
+    Lt.mean = Lt
+  } else {
+    Lt.mean = apply(Lt, 1, mean)
+  }
+  #Lt.mean = apply(Lt, 1, mean)
 
   Ed.sd = pi*apply(Lpanel, 1, sd)/rho.panel
   Li.sd = apply(Li, 1, sd)
-  Lt.sd = apply(Lt, 1, sd)
+  if (ncol(as.matrix(Lt)) == 1) {
+    print("Only one observation, can't calculate standard deviation")
+  } else {
+    Lt.sd = apply(Lt, 1, sd)
+  }
 
   ######## Compute Sky reflectance and rho and apply a smoothing function
   if (VERBOSE) print("Compute Sky and Surface reflectance and apply a smoothing function")
@@ -251,6 +260,34 @@ compute.ASD.rhow <- function(raw.asd,
 
   }
 
+  #Method 8: Implementation of Kutzer et al. 2013 for removal of sky glint
+  print("Begining the Kutzer correction for glint")
+  UVdataloc <- which.min(abs(Ltot$waves - 350))
+  NIRdataloc <- which.min(abs(Ltot$waves - 890))
+
+  UVdata <- sea.smooth[UVdataloc : (UVdataloc+30)]
+  NIRdata <- sea.smooth[NIRdataloc : (NIRdataloc+10)]
+
+  UVwave <- Ltot$waves[UVdataloc : (UVdataloc+30)]
+  NIRwave <- Ltot$waves[NIRdataloc : (NIRdataloc+10)]
+  print("Wavelength and data at UV and NIR binned")
+
+  UV.NIR.data <- c(UVdata,NIRdata)
+  UV.NIR.wave <- c(UVwave,NIRwave)
+  kutzerdata <- data.frame(UV.NIR.wave, UV.NIR.data)
+  names(kutzerdata) <- c("waves", "urhow")
+  print("Starting the NLS")
+  glint.fit <- nls(urhow ~ b*waves^z,start = list(b = 1, z = -1),data=kutzerdata)
+  #plot(kutzerdata$waves, kutzerdata$urhow)
+  #summary(glint.fit)
+  p <- coef(glint.fit)
+  kutzerestimate <- p[1]*(Ltot$waves)^p[2]
+  #plot(sea.smooth)
+  #lines(kutzerestimate)
+  # plot(sea.smooth - kutzerestimate)
+  # lines(rhow$rhow.COPS, col=2)
+  Rrs.kutzer <- sea.smooth - kutzerestimate
+  print("Kutzer correction finished")
 
   list.rho = list(
     waves = Ltot$waves,
@@ -262,6 +299,7 @@ compute.ASD.rhow <- function(raw.asd,
     rhow.UV = Rrs.UV * pi,
     rhow.UV.NIR = Rrs.UV.NIR * pi,
     rhow.COPS = Rrs.COPS * pi,
+    rhow.Kutzer = Rrs.kutzer * pi,
     rho.sky = rho,
     rho.sky.NIR = rho.sky.NIR,
     rho.sky.UV = rho.sky.UV,
@@ -286,3 +324,4 @@ compute.ASD.rhow <- function(raw.asd,
   return(list.rho)
 
 }
+
