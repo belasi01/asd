@@ -1,8 +1,8 @@
 Package: asd
 Type: Package
 Title: Analytical Spectral Device (ASD) routines
-Version: 1.1-2
-Date: 2020-06-18
+Version: 1.2
+Date: 2021-06-22
 Author: Simon Belanger
 Maintainer: <simon_belanger@uqar.ca>
 Description: Ensemble de routines pour lire les données ASD et calculer les

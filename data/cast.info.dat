@@ -24,6 +24,7 @@
 #      5 is for rho_sky estimated using the black pixel assumption in the UV (350 nm).
 #      6 is for rho_sky estimated using the black pixel assumption in both UV and NIR (spectrally dependent).
 #      7 is for rho_sky estimated using COPS Rrs measurement at 2 valid wavelengths (spectrally dependent).
+#      8 is for rho_sky estimated using Kutzer et al. 2013 method of power fitting at 2 valid wavelengths (UV-NIR) (spectrally dependent).
 #       999 is for BAD data.
 #
 ##################################################

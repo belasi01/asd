@@ -79,7 +79,8 @@ plot.ASD.rhow <- function (asd, PNG=FALSE, RADIANCES=FALSE) {
                                NIR = asd$rhow.NIR[ix.wl],
                                UV  = asd$rhow.UV[ix.wl],
                                UV.NIR = asd$rhow.UV.NIR[ix.wl],
-                               COPS= asd$rhow.COPS[ix.wl]))
+                               COPS= asd$rhow.COPS[ix.wl],
+                               Kutser13 = asd$rhow.Kutser[ix.wl]))
     } else {
       Df = as.data.frame(cbind(wavelength=asd$waves[ix.wl],
                                None=asd$rhow[ix.wl],
@@ -88,7 +89,8 @@ plot.ASD.rhow <- function (asd, PNG=FALSE, RADIANCES=FALSE) {
                                Similarity_780_870=asd$rhow.SIMILARITY2[ix.wl],
                                NIR = asd$rhow.NIR[ix.wl],
                                UV = asd$rhow.UV[ix.wl],
-                               UV.NIR = asd$rhow.UV.NIR[ix.wl]))
+                               UV.NIR = asd$rhow.UV.NIR[ix.wl],
+                               Kutser13 = asd$rhow.Kutser[ix.wl]))
     }
     Dfm = melt(Df, id.vars = c("wavelength"))
     names(Dfm) = c("wavelength", "rho_w", "value" )
