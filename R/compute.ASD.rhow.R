@@ -46,11 +46,13 @@ compute.ASD.rhow <- function(raw.asd,
   # use this to avoid negativa values of (ix350-5),May 22,2020, Yanqun
   if (ix350<6) ix350 = 6
 
+  ix380 = which.min(abs(Ltot$waves - 380))
   ix490 = which.min(abs(Ltot$waves - 490))
   ix720 = which.min(abs(Ltot$waves - 720))
   ix750 = which.min(abs(Ltot$waves - 750))
   ix780 = which.min(abs(Ltot$waves - 780))
   ix870 = which.min(abs(Ltot$waves - 870))
+  ix890 = which.min(abs(Ltot$waves - 890))
   ix900 = which.min(abs(Ltot$waves - 900))
 
 
@@ -134,17 +136,19 @@ compute.ASD.rhow <- function(raw.asd,
   Rrs.SIMILARITY2 = Rrs - offset # Apply NIR correction
 
   ###### Method 4. Estimation of the rho.fresnel assuming BLACK Pixel assumption in the NIR
-  rho.sky.NIR =  (mean(sea.smooth[(ix900-5):(ix900+5)], na.rm = T) /
-                       mean(sky.smooth[(ix900-5):(ix900+5)], na.rm = T))
+  rho.sky.NIR =  (mean(sea.smooth[ix890:ix900], na.rm = T) /
+                       mean(sky.smooth[ix890:ix900], na.rm = T))
   Rrs.BP = sea.smooth - (rho.sky.NIR*sky.smooth)
 
   ###### Method 5. Estimation of the rho.fresnel assuming BLACK Pixel assumption in the UV
-  rho.sky.UV =  (mean(sea.smooth[(ix350-5):(ix350+5)], na.rm = T) /
-                  mean(sky.smooth[(ix350-5):(ix350+5)], na.rm = T))
+  rho.sky.UV =  (mean(sea.smooth[ix350:ix380], na.rm = T) /
+                  mean(sky.smooth[ix350:ix380], na.rm = T))
   Rrs.UV = sea.smooth - (rho.sky.UV*sky.smooth)
 
   ###### Method 6. Estimation of the rho.fresnel assuming BLACK Pixel assumption in both UV and NIR (spectrally dependent)
-  rho.sky.UV.NIR = spline(c(350, 900), c(rho.sky.UV, rho.sky.NIR),
+  rho.sky.UV.NIR = spline(c(mean(Ltot$waves[ix350:ix380], na.rm = T),
+                            mean(Ltot$waves[ix890:ix900], na.rm = T)),
+                          c(rho.sky.UV, rho.sky.NIR),
                           xout = Ltot$waves)$y
   Rrs.UV.NIR = sea.smooth - (rho.sky.UV.NIR*sky.smooth)
 
@@ -260,34 +264,34 @@ compute.ASD.rhow <- function(raw.asd,
 
   }
 
-  #Method 8: Implementation of Kutzer et al. 2013 for removal of sky glint
-  print("Begining the Kutzer correction for glint")
-  UVdataloc <- which.min(abs(Ltot$waves - 350))
-  NIRdataloc <- which.min(abs(Ltot$waves - 890))
+  #Method 8: Implementation of Kutser et al. 2013 for removal of sky glint
+  #print("Begining the Kutser correction for glint")
+  UVdata <- sea.smooth[ix350:ix380]
+  NIRdata <- sea.smooth[ix890:ix900]
 
-  UVdata <- sea.smooth[UVdataloc : (UVdataloc+30)]
-  NIRdata <- sea.smooth[NIRdataloc : (NIRdataloc+10)]
-
-  UVwave <- Ltot$waves[UVdataloc : (UVdataloc+30)]
-  NIRwave <- Ltot$waves[NIRdataloc : (NIRdataloc+10)]
-  print("Wavelength and data at UV and NIR binned")
+  UVwave <- Ltot$waves[ix350:ix380]
+  NIRwave <- Ltot$waves[ix890:ix900]
+  #print("Wavelength and data at UV and NIR binned")
 
   UV.NIR.data <- c(UVdata,NIRdata)
   UV.NIR.wave <- c(UVwave,NIRwave)
-  kutzerdata <- data.frame(UV.NIR.wave, UV.NIR.data)
-  names(kutzerdata) <- c("waves", "urhow")
-  print("Starting the NLS")
-  glint.fit <- nls(urhow ~ b*waves^z,start = list(b = 1, z = -1),data=kutzerdata)
-  #plot(kutzerdata$waves, kutzerdata$urhow)
-  #summary(glint.fit)
+  Kutserdata <- data.frame(UV.NIR.wave, UV.NIR.data)
+  names(Kutserdata) <- c("waves", "urhow")
+  #print("Starting the NLS")
+  glint.fit <- nls(urhow ~ b*waves^z,start = list(b = 1, z = -1),data=Kutserdata)
+  plot(Kutserdata$waves, Kutserdata$urhow)
+
   p <- coef(glint.fit)
-  kutzerestimate <- p[1]*(Ltot$waves)^p[2]
+  Kutserestimate <- p[1]*(Ltot$waves)^p[2]
+  Rrs.Kutser <- sea.smooth - Kutserestimate
+
+  #summary(glint.fit)
   #plot(sea.smooth)
-  #lines(kutzerestimate)
-  # plot(sea.smooth - kutzerestimate)
-  # lines(rhow$rhow.COPS, col=2)
-  Rrs.kutzer <- sea.smooth - kutzerestimate
-  print("Kutzer correction finished")
+  #lines(Kutserestimate)
+  #plot(sea.smooth - Kutserestimate)
+  #lines(rhow$rhow.COPS, col=2)
+
+  #print("Kutser correction finished")
 
   list.rho = list(
     waves = Ltot$waves,
@@ -299,7 +303,7 @@ compute.ASD.rhow <- function(raw.asd,
     rhow.UV = Rrs.UV * pi,
     rhow.UV.NIR = Rrs.UV.NIR * pi,
     rhow.COPS = Rrs.COPS * pi,
-    rhow.Kutzer = Rrs.kutzer * pi,
+    rhow.Kutser = Rrs.Kutser * pi,
     rho.sky = rho,
     rho.sky.NIR = rho.sky.NIR,
     rho.sky.UV = rho.sky.UV,
