@@ -46,11 +46,13 @@ compute.ASD.rhow <- function(raw.asd,
   # use this to avoid negativa values of (ix350-5),May 22,2020, Yanqun
   if (ix350<6) ix350 = 6
 
+  ix380 = which.min(abs(Ltot$waves - 380))
   ix490 = which.min(abs(Ltot$waves - 490))
   ix720 = which.min(abs(Ltot$waves - 720))
   ix750 = which.min(abs(Ltot$waves - 750))
   ix780 = which.min(abs(Ltot$waves - 780))
   ix870 = which.min(abs(Ltot$waves - 870))
+  ix890 = which.min(abs(Ltot$waves - 890))
   ix900 = which.min(abs(Ltot$waves - 900))
 
 
